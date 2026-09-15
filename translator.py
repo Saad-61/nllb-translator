@@ -1,10 +1,12 @@
 import os
 import sys
+import logging
 import warnings
 from typing import Union, List
 
-# Suppress harmless tokenizer regex warnings
+# Suppress HuggingFace's mistaken mistral regex warning for NLLB
 warnings.filterwarnings("ignore")
+logging.getLogger("transformers.tokenization_utils_base").setLevel(logging.ERROR)
 
 # Ensure UTF-8 output on Windows consoles
 if sys.platform == "win32":
@@ -26,6 +28,8 @@ if sys.platform == "win32":
 
 import ctranslate2
 from transformers import AutoTokenizer
+from transformers.utils import logging as hf_logging
+hf_logging.set_verbosity_error()
 
 # Common language alias mapping
 LANG_MAP = {
@@ -82,7 +86,8 @@ def _get_engine():
             compute_type=compute_type,
             intra_threads=threads
         )
-        _TOKENIZER = AutoTokenizer.from_pretrained(_MODEL_DIR, fix_mistral_regex=True)
+        # Note: Do NOT pass fix_mistral_regex=True on NLLB - it corrupts SentencePiece tokens!
+        _TOKENIZER = AutoTokenizer.from_pretrained(_MODEL_DIR)
     return _TRANSLATOR, _TOKENIZER
 
 def _normalize_lang(code: str) -> str:
@@ -92,6 +97,7 @@ def _normalize_lang(code: str) -> str:
 def translate(content: Union[str, List[str]], to_lang: str, from_lang: str) -> Union[str, List[str]]:
     """
     Translates text between two specified languages.
+    Automatically handles multi-line strings preserving paragraph formatting.
 
     Parameters:
         content   (str | list[str]): Text or list of texts to translate.
@@ -105,53 +111,76 @@ def translate(content: Union[str, List[str]], to_lang: str, from_lang: str) -> U
 
     src_code = _normalize_lang(from_lang)
     tgt_code = _normalize_lang(to_lang)
-
-    is_single = isinstance(content, str)
-    texts = [content] if is_single else content
-
-    # Tokenize input using the source language code
     tokenizer.src_lang = src_code
-    tokenized_batch = []
-    for text in texts:
-        encoded = tokenizer(text)
-        tokens = tokenizer.convert_ids_to_tokens(encoded["input_ids"])
-        tokenized_batch.append(tokens)
 
-    # Translate with target language prefix
-    target_prefix = [[tgt_code] for _ in range(len(texts))]
-    translations = translator.translate_batch(
-        tokenized_batch,
-        target_prefix=target_prefix,
-        beam_size=4,
-        batch_type="tokens",
-        max_batch_size=2048
-    )
+    # Helper function to translate a flat list of sentences in batch
+    def _translate_batch_internal(items: List[str]) -> List[str]:
+        if not items:
+            return []
+        
+        tokenized_batch = []
+        indices_to_translate = []
+        
+        for idx, text in enumerate(items):
+            clean = text.strip()
+            if clean:
+                encoded = tokenizer(clean)
+                tokens = tokenizer.convert_ids_to_tokens(encoded["input_ids"])
+                tokenized_batch.append(tokens)
+                indices_to_translate.append(idx)
 
-    # Decode outputs
-    results = []
-    for trans in translations:
-        out_tokens = trans.hypotheses[0]
-        if len(out_tokens) > 0 and out_tokens[0] == tgt_code:
-            out_tokens = out_tokens[1:]
-        decoded = tokenizer.decode(tokenizer.convert_tokens_to_ids(out_tokens), skip_special_tokens=True)
-        results.append(decoded)
+        if not tokenized_batch:
+            return items
 
-    return results[0] if is_single else results
+        target_prefix = [[tgt_code] for _ in range(len(tokenized_batch))]
+        translations = translator.translate_batch(
+            tokenized_batch,
+            target_prefix=target_prefix,
+            beam_size=4,
+            batch_type="tokens",
+            max_batch_size=2048
+        )
+
+        translated_outputs = []
+        for trans in translations:
+            out_tokens = trans.hypotheses[0]
+            if len(out_tokens) > 0 and out_tokens[0] == tgt_code:
+                out_tokens = out_tokens[1:]
+            decoded = tokenizer.decode(tokenizer.convert_tokens_to_ids(out_tokens), skip_special_tokens=True)
+            translated_outputs.append(decoded)
+
+        # Reconstruct output preserving empty lines
+        final_results = list(items)
+        for orig_idx, trans_text in zip(indices_to_translate, translated_outputs):
+            final_results[orig_idx] = trans_text
+        return final_results
+
+    # If input is a single string containing newlines, translate line-by-line in batch
+    if isinstance(content, str):
+        if "\n" in content:
+            lines = content.split("\n")
+            translated_lines = _translate_batch_internal(lines)
+            return "\n".join(translated_lines)
+        else:
+            res = _translate_batch_internal([content])
+            return res[0] if res else ""
+
+    # If input is a list of strings
+    return _translate_batch_internal(content)
 
 
 if __name__ == "__main__":
-    # Clean, unambiguous sample sentence
-    sample_text = "Technology connects people from different cultures around the world."
-    print(f"Original Text: \"{sample_text}\"\n")
+    sample_text = "Hello, how are you?\nMy name is Saad Asif.\nWhat is your name?"
+    print(f"Original Text:\n{sample_text}\n")
 
     # English -> Urdu
     urdu_out = translate(sample_text, to_lang="urdu", from_lang="english")
-    print(f"[Urdu]    : {urdu_out}")
+    print(f"[Urdu]:\n{urdu_out}\n")
 
     # English -> French
     french_out = translate(sample_text, to_lang="french", from_lang="english")
-    print(f"[French]  : {french_out}")
+    print(f"[French]:\n{french_out}\n")
 
     # English -> Spanish
     spanish_out = translate(sample_text, to_lang="spanish", from_lang="english")
-    print(f"[Spanish] : {spanish_out}")
+    print(f"[Spanish]:\n{spanish_out}\n")
