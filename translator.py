@@ -33,21 +33,69 @@ hf_logging.set_verbosity_error()
 
 # Common language alias mapping
 LANG_MAP = {
+    # English & Urdu
     "en": "eng_Latn", "english": "eng_Latn",
     "ur": "urd_Arab", "urdu": "urd_Arab",
+    # European Languages
     "fr": "fra_Latn", "french": "fra_Latn",
     "es": "spa_Latn", "spanish": "spa_Latn",
     "de": "deu_Latn", "german": "deu_Latn",
-    "ar": "ara_Arab", "arabic": "ara_Arab",
-    "hi": "hin_Deva", "hindi": "hin_Deva",
-    "zh": "zho_Hans", "chinese": "zho_Hans",
-    "ru": "rus_Cyrl", "russian": "rus_Cyrl",
-    "ja": "jpn_Jpan", "japanese": "jpn_Jpan",
-    "pt": "por_Latn", "portuguese": "por_Latn",
     "it": "ita_Latn", "italian": "ita_Latn",
+    "pt": "por_Latn", "portuguese": "por_Latn",
+    "nl": "nld_Latn", "dutch": "nld_Latn",
+    "ru": "rus_Cyrl", "russian": "rus_Cyrl",
+    "uk": "ukr_Cyrl", "ukrainian": "ukr_Cyrl",
+    "pl": "pol_Latn", "polish": "pol_Latn",
+    "cs": "ces_Latn", "czech": "ces_Latn",
+    "sv": "swe_Latn", "swedish": "swe_Latn",
+    "da": "dan_Latn", "danish": "dan_Latn",
+    "fi": "fin_Latn", "finnish": "fin_Latn",
+    "no": "nob_Latn", "norwegian": "nob_Latn",
+    "el": "ell_Grek", "greek": "ell_Grek",
+    "ro": "ron_Latn", "romanian": "ron_Latn",
+    "hu": "hun_Latn", "hungarian": "hun_Latn",
+    # Middle Eastern & Central Asian
+    "ar": "ara_Arab", "arabic": "ara_Arab",
+    "fa": "pes_Arab", "persian": "pes_Arab", "farsi": "pes_Arab",
     "tr": "tur_Latn", "turkish": "tur_Latn",
+    "he": "heb_Hebr", "hebrew": "heb_Hebr",
+    "az": "azj_Latn", "azerbaijani": "azj_Latn",
+    "uz": "uzn_Latn", "uzbek": "uzn_Latn",
+    "kk": "kaz_Cyrl", "kazakh": "kaz_Cyrl",
+    "ku": "ckb_Arab", "kurdish": "ckb_Arab",
+    # South Asian Languages
+    "hi": "hin_Deva", "hindi": "hin_Deva",
+    "sd": "snd_Arab", "sindhi": "snd_Arab",
+    "ps": "pbt_Arab", "pashto": "pbt_Arab",
+    "pa": "pan_Guru", "punjabi": "pan_Guru",
+    "bn": "ben_Beng", "bengali": "ben_Beng",
+    "ks": "kas_Arab", "kashmiri": "kas_Arab",
+    "gu": "guj_Gujr", "gujarati": "guj_Gujr",
+    "mr": "mar_Deva", "marathi": "mar_Deva",
+    "ta": "tam_Taml", "tamil": "tam_Taml",
+    "te": "tel_Telu", "telugu": "tel_Telu",
+    "ml": "mal_Mlym", "malayalam": "mal_Mlym",
+    "kn": "kan_Knda", "kannada": "kan_Knda",
+    "ne": "npi_Deva", "nepali": "npi_Deva",
+    "si": "sin_Sinh", "sinhala": "sin_Sinh",
+    # East & Southeast Asian
+    "zh": "zho_Hans", "chinese": "zho_Hans", "chinese_traditional": "zho_Hant",
+    "ja": "jpn_Jpan", "japanese": "jpn_Jpan",
     "ko": "kor_Hang", "korean": "kor_Hang",
-    "fa": "pes_Arab", "persian": "pes_Arab"
+    "id": "ind_Latn", "indonesian": "ind_Latn",
+    "ms": "zsm_Latn", "malay": "zsm_Latn",
+    "vi": "vie_Latn", "vietnamese": "vie_Latn",
+    "th": "tha_Thai", "thai": "tha_Thai",
+    "tl": "tgl_Latn", "tagalog": "tgl_Latn", "filipino": "tgl_Latn",
+    "my": "mya_Mymr", "burmese": "mya_Mymr",
+    # African Languages
+    "sw": "swh_Latn", "swahili": "swh_Latn",
+    "so": "som_Latn", "somali": "som_Latn",
+    "ha": "hau_Latn", "hausa": "hau_Latn",
+    "yo": "yor_Latn", "yoruba": "yor_Latn",
+    "ig": "ibo_Latn", "igbo": "ibo_Latn",
+    "am": "amh_Ethi", "amharic": "amh_Ethi",
+    "zu": "zul_Latn", "zulu": "zul_Latn"
 }
 
 # Global instances for fast reuse
