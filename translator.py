@@ -55,7 +55,7 @@ LANG_MAP = {
     "ro": "ron_Latn", "romanian": "ron_Latn",
     "hu": "hun_Latn", "hungarian": "hun_Latn",
     # Middle Eastern & Central Asian
-    "ar": "ara_Arab", "arabic": "ara_Arab",
+    "ar": "arb_Arab", "arabic": "arb_Arab",
     "fa": "pes_Arab", "persian": "pes_Arab", "farsi": "pes_Arab",
     "tr": "tur_Latn", "turkish": "tur_Latn",
     "he": "heb_Hebr", "hebrew": "heb_Hebr",
@@ -185,6 +185,8 @@ def translate(content: Union[str, List[str]], to_lang: str, from_lang: str) -> U
             tokenized_batch,
             target_prefix=target_prefix,
             beam_size=4,
+            repetition_penalty=1.2,
+            no_repeat_ngram_size=3,
             batch_type="tokens",
             max_batch_size=2048
         )
