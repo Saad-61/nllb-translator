@@ -221,16 +221,20 @@ def translate(content: Union[str, List[str]], to_lang: str, from_lang: str) -> U
 
 if __name__ == "__main__":
     sample_text = "Hello, how are you?\nMy name is Saad Asif.\nWhat is your name?"
-    print(f"Original Text:\n{sample_text}\n")
+    print(f"Original Text: \"{sample_text}\"\n")
 
     # English -> Urdu
     urdu_out = translate(sample_text, to_lang="urdu", from_lang="english")
-    print(f"[Urdu]:\n{urdu_out}\n")
+    print(f"[Urdu]    : {urdu_out}")
 
     # English -> French
     french_out = translate(sample_text, to_lang="french", from_lang="english")
-    print(f"[French]:\n{french_out}\n")
+    print(f"[French]  : {french_out}")
 
     # English -> Spanish
     spanish_out = translate(sample_text, to_lang="spanish", from_lang="english")
-    print(f"[Spanish]:\n{spanish_out}\n")
+    print(f"[Spanish] : {spanish_out}")
+
+    # English -> Arabic
+    arabic_out = translate(sample_text, to_lang="arabic", from_lang="english")
+    print(f"[Arabic]  : {arabic_out}")
