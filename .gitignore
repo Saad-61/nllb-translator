@@ -1,0 +1,46 @@
+# Large model files & weights (downloaded via setup / HuggingFace)
+models/
+*.bin
+*.pt
+*.pth
+*.safetensors
+*.bpe.model
+*.spm
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments & packages
+.venv/
+venv/
+ENV/
+env/
+build/
+dist/
+*.egg-info/
+
+# Logs & Temporary files
+*.log
+*.tmp
+*.temp
+
+# Office temporary files (e.g. Word lock files)
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
+# IDE & Editor artifacts
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Operating System files
+.DS_Store
+Thumbs.db
+desktop.ini
